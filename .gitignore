@@ -2,3 +2,5 @@ predatorprey/predatorprey.iml
 predatorprey/.idea/
 predatorprey/out/
 *.class
+.idea/
+PredatorPrey.iml
