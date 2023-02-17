@@ -4,7 +4,7 @@ class Main {
   public static void main(String[] args) {
 
   // 1. Create the population of wolves and rabbits with their initial positions and attributes.
-   
+    
     
     // Store all of the animals in an array of animals
     int numWolves = 2;
@@ -15,7 +15,7 @@ class Main {
       Animals[i] == new Wolf(Math.Random()*100, Math.Random()*100, Math.Random()*100)
       i++
     }
-
+    
     for(int i=numWolves+1; i< numWolves + numRabbits; i++){
       Animals[i] == new Rabbit(Math.Random()*100, Math.Random()*100, Math.Random()*100)
       i++
