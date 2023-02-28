@@ -1,12 +1,15 @@
 public class Wolf extends Animal {
 
-    public float vision;
+    public static float max_hunger = 75; // property of all wolves
+
+    public float vision;  // [rp[erty of individual wolves
     public float hunger;
 
     public Wolf(int id, int pos_x, int pos_y, float vision) {
         super(id, pos_x, pos_y);
         this.vision = vision;
         this.hunger = 0f;
+        this.life_expectancy = 50;
     }
 
     public void updateHunger(float time_in_hours) {
@@ -20,6 +23,10 @@ public class Wolf extends Animal {
         this.hunger -= hunger_points_per_rabbit;
     }
 
-
-
+    @Override
+    public boolean check_death() {
+        boolean died_of_age =  super.check_death();
+        boolean died_of_hunger = this.hunger > this.max_hunger;
+        return died_of_age | died_of_hunger;
+    }
 }

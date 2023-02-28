@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 class Main {
+
     public static void main(String[] args) {
 
         boolean debug = true;
@@ -45,7 +46,7 @@ class Main {
 
         // 2. loop through time
         int num_timesteps = 5;
-        float time = 0;
+        float time_in_hours = 0;
         float hours_per_timestep = 2.5f;
 
         for (int timestep = 0; timestep < num_timesteps; timestep++) {
@@ -53,7 +54,7 @@ class Main {
             if (debug)
                 System.out.println(timestep);
 
-            time += hours_per_timestep;
+            time_in_hours += hours_per_timestep;
 
             // Update age of all animals (increases by hours_per_timestep)
             for (int i = 0; i< animals.size(); i++){
@@ -84,15 +85,15 @@ class Main {
                             //predation
                             boolean aiswolf = a.getClass()==Wolf.class;
                             if(aiswolf){
-                                // delete b
-                                // feed a
+                                // TODO delete b
+                                ((Wolf) a).eat_a_rabbit();
                             }
                             else{
-                                // delete a
-                                // feed b
+                                // TODO delete a
+                                ((Wolf) b).eat_a_rabbit();
                             }
                         }else{
-                            //reproduction
+                            ArrayList<Animal> children = reproduce(a, b);
                         }
                     }
                 }
@@ -101,11 +102,34 @@ class Main {
 
             // death of age or hunger
             for (int i = 0; i < animals.size(); i++) {
-                animals.get(i).death();
+                boolean dies = animals.get(i).check_death();
+                if(dies){
+                    // TODO delete the dead animal
+                }
             }
 
 
         }
 
+    }
+
+    // create children objects from parents pA and pB
+    private static ArrayList<Animal> reproduce(Animal pA, Animal pB){
+
+        ArrayList<Animal> children = new ArrayList<>();
+        int num_children_wolves = ; //TODO research this
+        int num_children_rabitts = ; //TODO research this
+
+
+        if(pA.getClass() == Wolf.class){
+            for(int i=0; i< num_children_wolves, i++){
+                children.add(new Wolf(i, pA.pos_X, pA.pos_Y, 0.5*(pA.vision + pB.vision));
+            }
+        }
+        if(pA.getClass() == Rabbit.class){
+
+        }
+
+        return children;
     }
 }

@@ -7,6 +7,8 @@ public class Animal {
     public int pos_y;
     public float age;
 
+    public float life_expectancy;  // in hours
+
     public Animal(int id, int pos_x, int pos_y) {
         this.id = id;
         this.pos_x = pos_x;
@@ -22,9 +24,9 @@ public class Animal {
         this.age += time;
     }
 
-    public void death(){
+    public boolean check_death(){
         //if age gets too high
-        //if wolf hunger gets too high
+        return this.age > this.life_expectancy;
     }
 
     public void updatePosition(){
@@ -36,9 +38,9 @@ public class Animal {
 
 
 
-    }
-
-
-
-
 }
+
+
+
+
+
