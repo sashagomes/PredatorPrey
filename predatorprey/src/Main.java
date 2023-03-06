@@ -100,9 +100,10 @@ class Main {
                                     ((Wolf) b).eat_a_rabbit();
                                 }
                             }
+                        //if two animals (a and b) are the same species
                         }else{
                             ArrayList<Animal> children = reproduce(a, b);
-                            //TODO add children ArrayList to animals ArrayList
+                            animals.addAll(children);
                         }
                     }
                 }
@@ -113,7 +114,7 @@ class Main {
             for (int i = 0; i < animals.size(); i++) {
                 boolean dies = animals.get(i).check_death();
                 if(dies){
-                    // TODO delete the dead animal
+                    animals.remove(i);
                 }
             }
 
