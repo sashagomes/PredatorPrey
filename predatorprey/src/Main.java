@@ -11,6 +11,7 @@ class Main {
         // Grid environment
         int numXcells = 5;
         int numYcells = 4;
+        float backgroundColor = 0.7f;
 
 
         // 1. Create the population of wolves and rabbits with their initial positions and attributes.
@@ -78,22 +79,30 @@ class Main {
             // detect encounters
             for (int i = 0; i < animals.size(); i++) {
                 Animal a = animals.get(i);
-                for(int j = 0; j < animals.size(); j++){
+                for(int j = i+1; j < animals.size(); j++){
                     Animal b = animals.get(j);
                     if(a.pos_x == b.pos_x && a.pos_y == b.pos_y){
                         if(a.getClass() != b.getClass()){
                             //predation
                             boolean aiswolf = a.getClass()==Wolf.class;
+
                             if(aiswolf){
-                                // TODO delete b
-                                ((Wolf) a).eat_a_rabbit();
+                                boolean wolfASeesRabbit = (backgroundColor -  ((Wolf) a).vision)/(backgroundColor - ((Rabbit) b).color) > 2;
+                                if(wolfASeesRabbit) {
+                                    animals.remove(b);
+                                    ((Wolf) a).eat_a_rabbit();
+                                }
                             }
                             else{
-                                // TODO delete a
-                                ((Wolf) b).eat_a_rabbit();
+                                boolean wolfBSeesRabbit = (backgroundColor -  ((Wolf) b).vision)/(backgroundColor - ((Rabbit) a).color) > 2;
+                                if(wolfBSeesRabbit) {
+                                    animals.remove(a);
+                                    ((Wolf) b).eat_a_rabbit();
+                                }
                             }
                         }else{
                             ArrayList<Animal> children = reproduce(a, b);
+                            //TODO add children ArrayList to animals ArrayList
                         }
                     }
                 }
@@ -117,19 +126,28 @@ class Main {
     private static ArrayList<Animal> reproduce(Animal pA, Animal pB){
 
         ArrayList<Animal> children = new ArrayList<>();
-        int num_children_wolves = ; //TODO research this
-        int num_children_rabitts = ; //TODO research this
+        int num_children_wolves = 4;
+        int num_children_rabbits = 5;
 
 
         if(pA.getClass() == Wolf.class){
-            for(int i=0; i< num_children_wolves, i++){
-                children.add(new Wolf(i, pA.pos_X, pA.pos_Y, 0.5*(pA.vision + pB.vision));
+            Wolf wA = (Wolf) pA;
+            Wolf wB = (Wolf) pB;
+
+            for(int i=0; i< num_children_wolves; i++){
+                children.add(new Wolf(i, wA.pos_x, wA.pos_y, 0.5f*(wA.vision + wB.vision)));
             }
         }
         if(pA.getClass() == Rabbit.class){
-
+            Rabbit rA = (Rabbit) pA;
+            Rabbit rB = (Rabbit) pB;
+            for(int i=0; i< num_children_rabbits; i++){
+                children.add(new Rabbit(i, rA.pos_x, rA.pos_y, 0.5f*(rA.color + rB.color)));
+            }
         }
 
         return children;
+
+
     }
 }

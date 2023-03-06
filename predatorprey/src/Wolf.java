@@ -2,7 +2,7 @@ public class Wolf extends Animal {
 
     public static float max_hunger = 75; // property of all wolves
 
-    public float vision;  // [rp[erty of individual wolves
+    public float vision;  // property of individual wolves
     public float hunger;
 
     public Wolf(int id, int pos_x, int pos_y, float vision) {
