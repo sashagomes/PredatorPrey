@@ -7,14 +7,13 @@ public class Animal {
     public int pos_y;
     public float age;
 
-    public float life_expectancy;  // in hours
+    public static float life_expectancy;  // in hours
 
     public Animal(int id, int pos_x, int pos_y) {
         this.id = id;
         this.pos_x = pos_x;
         this.pos_y = pos_y;
         this.age = 0f;
-
     }
 
     public void describe(){

@@ -60,7 +60,20 @@ class Main {
             for (int timestep = 0; timestep < num_timesteps; timestep++) {
 
                 //write to file
-                myWriter.write("Files in Java might be tricky, but it is fun enough!");
+                for (int i = 0; i< animals.size(); i++) {
+                    Animal a = animals.get(i);
+                    if (a.getClass() == Wolf.class){
+                        // timestep,iswolf,id,posx,posy,age,color,hunger,vision
+                        String str = String.format("%d,1,%d,%d,%d,%f,,%f,%f\n",timestep, a.id, a.pos_x, a.pos_y,a.age,  ((Wolf) a).hunger,((Wolf) a).vision);
+                        myWriter.write(str);
+                    }else{
+                        // timestep,iswolf,id,posx,posy,age,color,hunger,vision
+                        String str = String.format("%d,0,%d,%d,%d,%f,%f,,\n",timestep, a.id, a.pos_x, a.pos_y,a.age, ((Rabbit) a).color);
+                        myWriter.write(str);
+                    }
+                }
+
+
 
                 if (debug)
                     System.out.println(timestep);
@@ -69,11 +82,13 @@ class Main {
 
                 // Update age of all animals (increases by hours_per_timestep)
                 for (int i = 0; i< animals.size(); i++){
+                    System.out.println("age");
                     animals.get(i).updateAge(hours_per_timestep);
                 }
 
                 // update hunger of wolves
                 for (int i = 0; i< animals.size(); i++){
+                    System.out.println("hunger");
                     Animal a = animals.get(i);
                     if(a.getClass() == Wolf.class){
                         Wolf wolf = (Wolf) a;
@@ -83,11 +98,13 @@ class Main {
 
                 // update position of all animals
                 for (int i = 0; i < animals.size(); i++) {
+                    System.out.println("position");
                     animals.get(i).updatePosition();
                 }
 
                 // detect encounters
                 for (int i = 0; i < animals.size(); i++) {
+                    System.out.println("encounter");
                     Animal a = animals.get(i);
                     for(int j = i+1; j < animals.size(); j++){
                         Animal b = animals.get(j);
@@ -122,6 +139,7 @@ class Main {
 
                 // death of age or hunger
                 for (int i = 0; i < animals.size(); i++) {
+                    System.out.println("death");
                     boolean dies = animals.get(i).check_death();
                     if(dies){
                         animals.remove(i);
@@ -140,6 +158,7 @@ class Main {
         }
 
     }
+
 
     // create children objects from parents pA and pB
     private static ArrayList<Animal> reproduce(Animal pA, Animal pB) {
