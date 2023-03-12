@@ -9,7 +9,7 @@ public class Wolf extends Animal {
         super(id, pos_x, pos_y);
         this.vision = vision;
         this.hunger = 0f;
-        this.life_expectancy = 50;
+        this.life_expectancy = 52560; // 6 years
     }
 
     public void updateHunger(float time_in_hours) {

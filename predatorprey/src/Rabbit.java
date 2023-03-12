@@ -5,5 +5,6 @@ public class Rabbit extends Animal {
     public Rabbit(int id, int pos_x, int pos_y, float color) {
         super(id, pos_x, pos_y);
         this.color = color;
+        this.life_expectancy = 17520; // 2 years
     }
 }

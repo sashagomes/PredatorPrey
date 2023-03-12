@@ -14,6 +14,7 @@ public class Animal {
         this.pos_x = pos_x;
         this.pos_y = pos_y;
         this.age = 0f;
+
     }
 
     public void describe(){
