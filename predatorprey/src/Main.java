@@ -9,19 +9,42 @@ class Main {
     public static void main(String[] args) {
 
         ArrayList<runConfig> runConfigs = new ArrayList<>();
-        runConfigs.add(new runConfig(2, 2, 5, 2.5f, 4,
-                5, 5,4,0.7f, 75, 25.3f,3.4f));
+
+        runConfigs.add(new runConfig(6, 6,
+                20, 2.5f,
+                4, 5,
+                20,20,0.7f,
+                50, 25.3f,3.4f));
+        runConfigs.add(new runConfig(2, 2,
+                5, 2.5f,
+                4, 5,
+                5,4,0.7f,
+                75, 25.3f,3.4f));
+        runConfigs.add(new runConfig(2, 2,
+                5, 2.5f,
+                4, 5,
+                5,4,0.7f,
+                75, 25.3f,3.4f));
 
 
         try {
+
+
+            FileWriter cfgWriter = new FileWriter("simout/cfg.txt");
+            cfgWriter.write(runConfig.header);
+
             for(int i=0;i<runConfigs.size();i++) {
+                System.out.println("run "+i);
                 runConfig run = runConfigs.get(i);
+                cfgWriter.write(run.asString());
                 run_simulation(i,run.numWolves, run.numRabbits,
                                run.num_timesteps, run.hours_per_timestep,
                                run.num_children_wolves, run.num_children_rabbits,
                                run.numXcells, run.numYcells, run.backgroundColor,
                                 run.max_hunger, run.hunger_points_per_rabbit, run.delta_hunger_per_hour);
             }
+
+            cfgWriter.close();
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -35,8 +58,6 @@ class Main {
                                        int numXcells, int numYcells, float backgroundColor,
                                        float max_hunger, float hunger_points_per_rabbit, float delta_hunger_per_hour) throws IOException {
 
-
-        boolean debug = true;
         FileWriter myWriter = null;
 
         // Store all of the animals in an array of animals
@@ -56,19 +77,10 @@ class Main {
             animals.add(new Rabbit(i, posX, posY, (float) Math.random()));
         }
 
-        //////////////////////////////////
-        if (debug) {
-            for (Animal x : animals) {
-                x.describe();
-            }
-        }
-        //////////////////////////////////
-
         // create new FileWriter
         myWriter = new FileWriter(String.format("simout/%d.txt",runid));
         myWriter.write("timestep,iswolf,id,posx,posy,age,color,hunger,vision\n");
 
-//        float time_in_hours = 0f;
         for (int timestep = 0; timestep < num_timesteps; timestep++) {
 
             ArrayList<Animal> remove_these = new ArrayList<>();
@@ -88,11 +100,6 @@ class Main {
                     myWriter.write(str);
                 }
             }
-
-            if (debug)
-                System.out.println(timestep);
-
-//            time_in_hours += hours_per_timestep;
 
             // Update age of all animals (increases by hours_per_timestep)
             for (int i = 0; i< animals.size(); i++){

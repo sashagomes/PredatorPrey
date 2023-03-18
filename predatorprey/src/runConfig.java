@@ -1,4 +1,7 @@
 public class runConfig {
+
+    static String header = "numWolves,numRabbits,num_timesteps,hours_per_timestep,num_children_wolves,num_children_rabbits,numXcells,numYcells,backgroundColor,max_hunger,hunger_points_per_rabbit,delta_hunger_per_hour\n";
+
     int numWolves;
     int numRabbits;
     int num_timesteps;
@@ -29,5 +32,12 @@ public class runConfig {
         this.hunger_points_per_rabbit = hunger_points_per_rabbit;
         this.delta_hunger_per_hour = delta_hunger_per_hour;
 
+    }
+
+    public String asString() {
+        return String.format("%d,%d,%d,%f,%d,%d,%d,%d,%f,%f,%f,%f\n",
+                numWolves, numRabbits, num_timesteps, hours_per_timestep,
+                num_children_wolves,num_children_rabbits,numXcells,numYcells,
+                backgroundColor,max_hunger, hunger_points_per_rabbit, delta_hunger_per_hour);
     }
 }
