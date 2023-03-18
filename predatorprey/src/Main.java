@@ -6,23 +6,21 @@ import java.util.concurrent.ThreadLocalRandom;
 
 class Main {
 
-    // Grid environment
-    static int numXcells = 5;
-    static int numYcells = 4;
-    static float backgroundColor = 0.7f;
-
     public static void main(String[] args) {
 
         ArrayList<runConfig> runConfigs = new ArrayList<>();
-        runConfigs.add(new runConfig(2, 2, 5, 2.5f));
-        runConfigs.add(new runConfig(2, 2, 5, 2.5f));
-        runConfigs.add(new runConfig(2, 2, 5, 2.5f));
-        runConfigs.add(new runConfig(2, 2, 5, 2.5f));
+        runConfigs.add(new runConfig(2, 2, 5, 2.5f, 4,
+                5, 5,4,0.7f, 75, 25.3f,3.4f));
+
 
         try {
             for(int i=0;i<runConfigs.size();i++) {
                 runConfig run = runConfigs.get(i);
-                run_simulation(i,run.numWolves, run.numRabbits, run.num_timesteps, run.hours_per_timestep);
+                run_simulation(i,run.numWolves, run.numRabbits,
+                               run.num_timesteps, run.hours_per_timestep,
+                               run.num_children_wolves, run.num_children_rabbits,
+                               run.numXcells, run.numYcells, run.backgroundColor,
+                                run.max_hunger, run.hunger_points_per_rabbit, run.delta_hunger_per_hour);
             }
 
         } catch (IOException e) {
@@ -31,7 +29,11 @@ class Main {
 
     }
 
-    private static void run_simulation(int runid,int numWolves,int numRabbits, int num_timesteps,float hours_per_timestep) throws IOException {
+    private static void run_simulation(int runid, int numWolves, int numRabbits,
+                                       int num_timesteps, float hours_per_timestep,
+                                       int num_children_wolves, int num_children_rabbits,
+                                       int numXcells, int numYcells, float backgroundColor,
+                                       float max_hunger, float hunger_points_per_rabbit, float delta_hunger_per_hour) throws IOException {
 
 
         boolean debug = true;
@@ -44,7 +46,7 @@ class Main {
         for (int i=0; i < numWolves; i++) {
             int posX = ThreadLocalRandom.current().nextInt(0, numXcells);
             int posY = ThreadLocalRandom.current().nextInt(0, numYcells);
-            animals.add(new Wolf(i, posX, posY, (float) Math.random()));
+            animals.add(new Wolf(i, posX, posY, (float) Math.random(), max_hunger));
         }
 
         // create rabbits with random initial position
@@ -102,7 +104,7 @@ class Main {
                 Animal a = animals.get(i);
                 if(a.getClass() == Wolf.class){
                     Wolf wolf = (Wolf) a;
-                    wolf.updateHunger(hours_per_timestep);
+                    wolf.updateHunger(hours_per_timestep,delta_hunger_per_hour);
                 }
             }
 
@@ -125,19 +127,19 @@ class Main {
                                 boolean wolfASeesRabbit = (backgroundColor -  ((Wolf) a).vision)/(backgroundColor - ((Rabbit) b).color) > 2;
                                 if(wolfASeesRabbit) {
                                     remove_these.add(b);
-                                    ((Wolf) a).eat_a_rabbit();
+                                    ((Wolf) a).eat_a_rabbit(hunger_points_per_rabbit);
                                 }
                             }
                             else{
                                 boolean wolfBSeesRabbit = (backgroundColor -  ((Wolf) b).vision)/(backgroundColor - ((Rabbit) a).color) > 2;
                                 if(wolfBSeesRabbit) {
                                     remove_these.add(a);
-                                    ((Wolf) b).eat_a_rabbit();
+                                    ((Wolf) b).eat_a_rabbit(hunger_points_per_rabbit);
                                 }
                             }
                             //if two animals (a and b) are the same species
                         }else{
-                            ArrayList<Animal> children = reproduce(a, b);
+                            ArrayList<Animal> children = reproduce(a, b, num_children_wolves, num_children_rabbits, numXcells, numYcells,max_hunger);
                             add_these.addAll(children);
                         }
                     }
@@ -170,11 +172,10 @@ class Main {
     }
 
     // create children objects from parents pA and pB
-    private static ArrayList<Animal> reproduce(Animal pA, Animal pB) {
+    private static ArrayList<Animal> reproduce(Animal pA, Animal pB, int num_children_wolves, int num_children_rabbits,
+                                               int numXcells, int numYcells, float max_hunger) {
 
         ArrayList<Animal> children = new ArrayList<>();
-        int num_children_wolves = 4;
-        int num_children_rabbits = 5;
 
 
         if(pA.getClass() == Wolf.class){
@@ -184,7 +185,7 @@ class Main {
             for(int i=0; i< num_children_wolves; i++){
                 int posX = ThreadLocalRandom.current().nextInt(0, numXcells);
                 int posY = ThreadLocalRandom.current().nextInt(0, numYcells);
-                children.add(new Wolf(i, posX, posY, 0.5f*(wA.vision + wB.vision)));
+                children.add(new Wolf(i, posX, posY, 0.5f*(wA.vision + wB.vision), max_hunger));
             }
         }
         if(pA.getClass() == Rabbit.class){

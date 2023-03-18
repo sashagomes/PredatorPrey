@@ -4,3 +4,4 @@ predatorprey/out/
 *.class
 .idea/
 PredatorPrey.iml
+simout/*.txt
