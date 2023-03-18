@@ -6,8 +6,7 @@ public class Animal {
     public int pos_x;
     public int pos_y;
     public float age;
-
-    public static float life_expectancy;  // in hours
+    public float life_expectancy;  // in hours
 
     public Animal(int id, int pos_x, int pos_y) {
         this.id = id;
