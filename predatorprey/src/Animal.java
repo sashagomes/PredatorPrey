@@ -5,7 +5,7 @@ public class Animal {
     public int id;
     public int pos_x;
     public int pos_y;
-    public float age;
+    public float age;   // in hours
     public float life_expectancy;  // in hours
 
     public Animal(int id, int pos_x, int pos_y) {

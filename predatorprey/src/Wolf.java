@@ -1,3 +1,5 @@
+import java.util.concurrent.ThreadLocalRandom;
+
 public class Wolf extends Animal {
 
 //    public static float max_hunger = 75; // property of all wolves
@@ -12,7 +14,8 @@ public class Wolf extends Animal {
         super(id, pos_x, pos_y);
         this.vision = vision;
         this.hunger = 0f;
-        this.life_expectancy = 52560;
+        this.life_expectancy = 1000;
+        this.age = ThreadLocalRandom.current().nextFloat()*this.life_expectancy;
         this.max_hunger = max_hunger;
     }
 
