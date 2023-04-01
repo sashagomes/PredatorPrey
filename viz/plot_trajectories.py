@@ -1,12 +1,10 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-
 
 cfg = pd.read_csv("../simout/cfg.txt")
 numRuns = cfg.shape[0]
 
-runId = 0
+runId = 2
 num_timesteps = cfg.loc[runId, 'num_timesteps']
 numWolves = cfg.loc[runId, 'numWolves']
 numRabbits = cfg.loc[runId, 'numRabbits']

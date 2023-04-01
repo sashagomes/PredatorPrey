@@ -4,6 +4,8 @@ import java.lang.Math;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static java.lang.Math.abs;
+
 class Main {
 
     static int largest_id = -1;
@@ -12,19 +14,19 @@ class Main {
 
         ArrayList<runConfig> runConfigs = new ArrayList<>();
 
-//        runConfigs.add(new runConfig(20, 20,
-//                20, 2.5f,
-//                4, 5,
-//                100,100,0.7f,
-//                50, 25.3f,3.4f));
-//
-//        runConfigs.add(new runConfig(50, 50,
-//                100, 5f,
-//                4, 5,
-//                1000,1000,0.7f,
-//                75, 25.3f,3.4f));
+        runConfigs.add(new runConfig(50, 50,
+                50, 2.5f,
+                2, 5,
+                100,100,0.7f,
+                50, 25.3f,3.4f));
 
-        runConfigs.add(new runConfig(70, 100,
+        runConfigs.add(new runConfig(50, 100,
+                1000, 5f,
+                5, 2,
+                1000,1000,0.7f,
+                75, 25.3f,3.4f));
+
+        runConfigs.add(new runConfig(80, 130,
                 1000, 2.5f,
                 2, 5,
                 250,250,0.3f,
@@ -66,7 +68,7 @@ class Main {
         FileWriter simWriter = null;
         FileWriter logWriter = null;
 
-        // Store all of the animals in an array of animals
+        // Store all the animals in an array of animals
         ArrayList<Animal> animals = new ArrayList<>();
 
         // create wolves with random initial position
@@ -85,8 +87,10 @@ class Main {
 
         // create new FileWriter
         simWriter = new FileWriter(String.format("simout/%d.txt",runid));
+        //order of data
         simWriter.write("timestep,iswolf,id,posx,posy,age,color,hunger,vision\n");
 
+        // create new FileWriter for logging interactions
         logWriter = new FileWriter(String.format("simout/%d_log.txt",runid));
 
         for (int timestep = 0; timestep < num_timesteps; timestep++) {
@@ -102,12 +106,14 @@ class Main {
                 Animal a = animals.get(i);
                 if (a.getClass() == Wolf.class){
                     // timestep,iswolf,id,posx,posy,age,color,hunger,vision
-                    String str = String.format("%d,1,%d,%d,%d,%f,,%f,%f\n",timestep, a.id, a.pos_x, a.pos_y,a.age,  ((Wolf) a).hunger,((Wolf) a).vision);
+                    String str = String.format("%d,1,%d,%d,%d,%f,,%f,%f\n",
+                            timestep, a.id, a.pos_x, a.pos_y,a.age,  ((Wolf) a).hunger,((Wolf) a).vision);
                     simWriter.write(str);
                 }
                 else{
                     // timestep,iswolf,id,posx,posy,age,color,hunger,vision
-                    String str = String.format("%d,0,%d,%d,%d,%f,%f,,\n",timestep, a.id, a.pos_x, a.pos_y,a.age, ((Rabbit) a).color);
+                    String str = String.format("%d,0,%d,%d,%d,%f,%f,,\n",
+                            timestep, a.id, a.pos_x, a.pos_y,a.age, ((Rabbit) a).color);
                     simWriter.write(str);
                 }
             }
@@ -142,25 +148,29 @@ class Main {
                             boolean aiswolf = a.getClass()==Wolf.class;
 
                             if(aiswolf){
-                                boolean wolfASeesRabbit = true; //(backgroundColor -  ((Wolf) a).vision)/(backgroundColor - ((Rabbit) b).color) > 2;
-                                if(wolfASeesRabbit) {
+                                if(wolfseesrabbit((Wolf)a,(Rabbit)b,backgroundColor)) {
                                     remove_these.add(b);
 
-                                    logWriter.write(String.format("Wolf %d ate rabbit %d\n",a.id,b.id));
+                                    logWriter.write(String.format("%d Wolf %d ate rabbit %d\n",timestep,a.id,b.id));
                                     ((Wolf) a).eat_a_rabbit(hunger_points_per_rabbit);
+                                }else{
+                                    logWriter.write(String.format("%d Wolf %d did not see rabbit %d\n",timestep,a.id,b.id));
                                 }
                             }
                             else{
-                                boolean wolfBSeesRabbit = true; // (backgroundColor -  ((Wolf) b).vision)/(backgroundColor - ((Rabbit) a).color) > 2;
-                                if(wolfBSeesRabbit) {
+                                if(wolfseesrabbit((Wolf)b,(Rabbit)a,backgroundColor)) {
                                     remove_these.add(a);
-                                    logWriter.write(String.format("Wolf %d ate rabbit %d\n",b.id,a.id));
+                                    logWriter.write(String.format("%d Wolf %d ate rabbit %d\n",timestep,b.id,a.id));
                                     ((Wolf) b).eat_a_rabbit(hunger_points_per_rabbit);
+                                }else{
+                                    logWriter.write(String.format("%d Wolf %d did not see rabbit %d\n",timestep,b.id,a.id));
                                 }
                             }
                             //if two animals (a and b) are the same species
                         }else{
-                            ArrayList<Animal> children = reproduce(a, b, num_children_wolves, num_children_rabbits, numXcells, numYcells,max_hunger,logWriter);
+                            ArrayList<Animal> children =
+                                    reproduce(timestep,a, b, num_children_wolves, num_children_rabbits,
+                                            numXcells, numYcells,max_hunger,logWriter);
                             add_these.addAll(children);
                         }
                     }
@@ -186,11 +196,8 @@ class Main {
             }
 
             //add children
-            if(add_these.size()>0) {
-                for (Animal a : add_these)
-                    logWriter.write(String.format("%d Animal %d (%s) was added\n",timestep, a.id,a.getClass().getSimpleName()));
+            if(add_these.size()>0)
                 animals.addAll(add_these);
-            }
 
         }
 
@@ -201,14 +208,14 @@ class Main {
     }
 
     // create children objects from parents pA and pB
-    private static ArrayList<Animal> reproduce(Animal pA, Animal pB, int num_children_wolves, int num_children_rabbits,
+    private static ArrayList<Animal> reproduce(int timestep,Animal pA, Animal pB, int num_children_wolves, int num_children_rabbits,
                                                int numXcells, int numYcells, float max_hunger, FileWriter logWriter) throws IOException{
 
         ArrayList<Animal> children = new ArrayList<>();
 
         if(pA.getClass() == Wolf.class){
 
-            logWriter.write(String.format("Wolf reproduction: %d,%d\n",pA.id,pB.id));
+            logWriter.write(String.format("%d Wolf reproduction: %d,%d\n",timestep,pA.id,pB.id));
 
             Wolf wA = (Wolf) pA;
             Wolf wB = (Wolf) pB;
@@ -216,20 +223,24 @@ class Main {
             for(int i=0; i< num_children_wolves; i++){
                 int posX = ThreadLocalRandom.current().nextInt(0, numXcells);
                 int posY = ThreadLocalRandom.current().nextInt(0, numYcells);
-                children.add(new Wolf(generate_id(), posX, posY, 0.5f*(wA.vision + wB.vision), max_hunger));
+                Wolf child = new Wolf(generate_id(), posX, posY, 0.5f*(wA.vision + wB.vision), max_hunger);
+                children.add(child);
+                logWriter.write(String.format("\tWolf %d (%f) born of %d (%f) and %d (%f)\n",child.id, child.vision,wA.id, wA.vision, wB.id, wB.vision));
             }
 
         }
         if(pA.getClass() == Rabbit.class){
 
-            logWriter.write(String.format("Rabbit reproduction: %d,%d\n",pA.id,pB.id));
+            logWriter.write(String.format("%d Rabbit reproduction: %d,%d\n",timestep,pA.id,pB.id));
 
             Rabbit rA = (Rabbit) pA;
             Rabbit rB = (Rabbit) pB;
             for(int i=0; i< num_children_rabbits; i++){
                 int posX = ThreadLocalRandom.current().nextInt(0, numXcells);
                 int posY = ThreadLocalRandom.current().nextInt(0, numYcells);
-                children.add(new Rabbit(generate_id(), posX, posY, 0.5f*(rA.color + rB.color)));
+                Rabbit child = new Rabbit(generate_id(), posX, posY, 0.5f*(rA.color + rB.color));
+                children.add(child);
+                logWriter.write(String.format("\tRabbit %d (%f) born of %d (%f) and %d (%f)\n",child.id, child.color,rA.id, rA.color, rB.id,rB.color));
             }
         }
 
@@ -241,6 +252,11 @@ class Main {
     private static int generate_id(){
         largest_id += 1;
         return largest_id;
+    }
+
+    private static boolean wolfseesrabbit(Wolf wolf, Rabbit rabbit, float backgroundColor){
+        float alpha = 1f;
+        return abs(backgroundColor-wolf.vision) < alpha*abs(backgroundColor-rabbit.color);
     }
 
 }

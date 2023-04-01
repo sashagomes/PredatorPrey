@@ -2,10 +2,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Wolf extends Animal {
 
-//    public static float max_hunger = 75; // property of all wolves
-//    public static float hunger_points_per_rabbit = 25.3f;
-//    public static float delta_hunger_per_hour = 3.4f;
-
     public float vision;  // property of individual wolves
     public float hunger;
     public float max_hunger;

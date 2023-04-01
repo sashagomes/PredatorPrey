@@ -15,10 +15,6 @@ public class Animal {
         this.age = 0f;
     }
 
-    public void describe(){
-        System.out.println("pos_x = " + pos_x + ", pos_y = " + pos_y);
-    }
-
     public void updateAge(float time){
         this.age += time;
     }

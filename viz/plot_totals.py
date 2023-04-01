@@ -3,25 +3,29 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 cfg = pd.read_csv("../simout/cfg.txt")
+numruns = cfg.shape[0]
 
-runId = 0
-sim = pd.read_csv(f"../simout/{runId}.txt")
+for runId in range(numruns):
 
-time = np.sort(sim['timestep'].unique())
-numtimesteps = time.shape[0]
+    sim = pd.read_csv(f"../simout/{runId}.txt")
 
-numwolves = np.empty(numtimesteps)
-numrabbits = np.empty(numtimesteps)
+    time = np.sort(sim['timestep'].unique())
+    numtimesteps = time.shape[0]
 
-for t in range(numtimesteps):
-    now  = sim.loc[sim['timestep']==t,'iswolf']
-    numwolves[t] = sum( now==1 )
-    numrabbits[t]=  sum( now==0 )
+    numwolves = np.empty(numtimesteps)
+    numrabbits = np.empty(numtimesteps)
 
-plt.figure()
-plt.plot(time,numwolves,label='wolves')
-plt.plot(time,numrabbits,label='rabbits')
-plt.legend()
+    for t in range(numtimesteps):
+        now  = sim.loc[sim['timestep']==t,'iswolf']
+        numwolves[t] = sum( now==1 )
+        numrabbits[t]=  sum( now==0 )
+
+    plt.figure()
+    plt.title(f"Run {runId}")
+    plt.plot(time,numwolves,label='# wolves')
+    plt.plot(time,numrabbits,label='# rabbits')
+    plt.legend()
+
 plt.show()
 
 

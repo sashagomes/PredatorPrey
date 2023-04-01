@@ -9,6 +9,5 @@ public class Rabbit extends Animal {
         this.color = color;
         this.life_expectancy = 730; // 2 years
         this.age = ThreadLocalRandom.current().nextFloat()*this.life_expectancy;
-
     }
 }
